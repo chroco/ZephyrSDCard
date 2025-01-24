@@ -4,7 +4,7 @@ int main(void)
 {
 	SDCard sdcard = SDCard();
 
-	sdcard.doSDCardThings();
+	sdcard.testWrite();
 
 //*
 	while (1) 

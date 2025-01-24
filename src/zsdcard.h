@@ -35,10 +35,14 @@
 #define FS_RET_OK 0
 #endif
 
-#define MAX_PATH 128
-#define SOME_FILE_NAME "some.dat"
-#define SOME_DIR_NAME "some"
-#define SOME_REQUIRED_LEN MAX(sizeof(SOME_FILE_NAME), sizeof(SOME_DIR_NAME))
+#define MAX_FILENAME 64
+#define MAX_PATH MAX_FILENAME + 64
+#define BASE_NAME "yarrrr"
+#define DIR_NAME BASE_NAME
+#define FILE_NAME BASE_NAME".dat"
+#define REQUIRED_LEN MAX(sizeof(FILE_NAME), sizeof(DIR_NAME))
+
+#define FILE_BUFFER_LENGTH 128
 
 class SDCard
 {
@@ -46,20 +50,19 @@ class SDCard
 		SDCard();
 		~SDCard();
 
-		int	doSDCardThings(void);
+		int	testWrite(void);
+		int mount(void);
+		int unmount(void);
+		int write(char *, const char *);
+		int write(fs_file_t *, char *, const char *);
+		int lsdir(const char *);
+		int mkdir(const char *);
 	private:
+		void probe(void);
+		
 		static FATFS fat_fs;
 		static fs_mount_t mp;
-		
-		static int lsdir(const char *);
-		static const char *disk_mount_pt;// = DISK_MOUNT_PT;
-		void probeCard(void);
-		
-#ifdef CONFIG_FS_SAMPLE_CREATE_SOME_ENTRIES
-		bool create_some_entries(const char *);
-#endif
-
+		static const char *disk_mount_pt;
 };
-
 
 #endif
