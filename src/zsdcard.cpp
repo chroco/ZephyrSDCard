@@ -177,17 +177,30 @@ int SDCard::write(fs_file_t *file, char *file_data_buffer, const char *file_name
 	}
 
 	int ret = fs_write(file, file_data_buffer, FILE_BUFFER_LENGTH);
+
+	// TODO: do some error checking
 	
 	fs_close(file);
 
 	return ret;
 }
 
-int mkdirdir(const char *)
+int SDCard::read(char *file_data_buffer, const char *file_name)
 {
+	//ssize_t	fs_read (struct fs_file_t *zfp, void *ptr, size_t size)
+	int res;
+	struct fs_dir_t dirp;
+	static struct fs_dirent entry;
+	int count = 0;
+
+	fs_dir_t_init(&dirp);
+
+
+
 
 	return 0;
 }
+
 
 int SDCard::lsdir(const char *path)
 {

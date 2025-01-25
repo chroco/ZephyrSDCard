@@ -54,6 +54,8 @@ class SDCard
 		int mount(void);
 		int unmount(void);
 		int write(char *, const char *);
+		int read(char *, const char *);
+//ssize_t	fs_read (struct fs_file_t *zfp, void *ptr, size_t size)
 		int write(fs_file_t *, char *, const char *);
 		int lsdir(const char *);
 		int mkdir(const char *);
