@@ -127,16 +127,21 @@ int SDCard::unmount(void)
 
 int SDCard::testWrite(void)
 {
-	char file_data_buffer[FILE_BUFFER_LENGTH] = {0};
-	
 	probe();
 
 	mount();
 
+/*
+	char file_data_buffer[FILE_BUFFER_LENGTH] = {0};
 	sprintf(file_data_buffer, "weeeeeeeeeeeeeeeeeee!\n");
-	write(file_data_buffer, "fml.dat");
+	write(file_data_buffer, TEST_FILE);
+	//write(file_data_buffer, "fml.dat");
+//*/
 	
-	lsdir(disk_mount_pt);
+	//search(file_data_buffer, "test.dat\0");
+	search(NULL, "test.dat\0");
+	
+	//lsdir(disk_mount_pt);
 	
 	unmount();
 
@@ -185,18 +190,99 @@ int SDCard::write(fs_file_t *file, char *file_data_buffer, const char *file_name
 	return ret;
 }
 
-int SDCard::read(char *file_data_buffer, const char *file_name)
+int SDCard::search(char *file_data_buffer, const char *file_name)
 {
-	//ssize_t	fs_read (struct fs_file_t *zfp, void *ptr, size_t size)
 	int res;
 	struct fs_dir_t dirp;
 	static struct fs_dirent entry;
 	int count = 0;
+	const char *path = disk_mount_pt;
 
 	fs_dir_t_init(&dirp);
 
+	// Verify fs_opendir()
+	res = fs_opendir(&dirp, path);
+	if (res) 
+	{
+		printk("Error opening dir %s [%d]\n", path, res);
+		
+		return res;
+	}
+
+	printk("\nListing dir %s ...\n", path);
+
+	char testString[] = "test.dat\0";
+
+	for (;;) 
+	{
+		// Verify fs_readdir() 
+		res = fs_readdir(&dirp, &entry);
+
+		// entry.name[0] == 0 means end-of-dir 
+		if (res || entry.name[0] == 0) 
+		{
+			break;
+		}
+
+		if(strncmp(entry.name, TEST_FILE, sizeof(TEST_FILE) == 0))
+		{
+			printk("found %s\n", entry.name);
+		}
+
+		if (entry.type == FS_DIR_ENTRY_DIR) 
+		{
+			printk("[DIR ] %s\n", entry.name);
+		} 
+		else 
+		{
+			//if(strncmp(entry.name, TEST_FILE, sizeof(TEST_FILE) == 0))
+			printk("comparing %s (%d), %s (%d)\n", 
+					entry.name, sizeof(entry.name), TEST_FILE, sizeof(TEST_FILE)
+			);
+			if(strncmp(entry.name, TEST_FILE, sizeof(TEST_FILE) == 0))
+			{
+				printk("found %s\n", entry.name);
+			}
+
+			printk("[FILE] %s (size = %zu)\n", entry.name, entry.size);
+		}
+
+		++count;
+	}
+
+	// Verify fs_closedir() 
+	res = fs_closedir(&dirp);
+	if (res == 0) 
+	{
+		res = count;
+		printk("Closing dir %s [%d]\n", path, res);
+	}
 
 
+	return 0;
+}
+
+int SDCard::read(char *file_data_buffer, const char *file_name)
+{
+	/*
+	//ssize_t	fs_read (struct fs_file_t *zfp, void *ptr, size_t size)
+	int res;
+	fs_dir_t dirp;
+	static fs_dirent entry;
+	int count = 0;
+	//char file_data_buffer[FILE_BUFFER_LENGTH] = {0};
+	
+	fs_dir_t_init(&dirp);
+
+	res = fs_opendir(&dirp, path);
+	if (res) 
+	{
+		printk("Error opening dir %s [%d]\n", path, res);
+		
+		return res;
+	}
+
+//*/	
 
 	return 0;
 }

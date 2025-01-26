@@ -35,6 +35,7 @@
 #define FS_RET_OK 0
 #endif
 
+#define TEST_FILE "TEST.DAT"
 #define MAX_FILENAME 64
 #define MAX_PATH MAX_FILENAME + 64
 #define BASE_NAME "yarrrr"
@@ -55,6 +56,7 @@ class SDCard
 		int unmount(void);
 		int write(char *, const char *);
 		int read(char *, const char *);
+		int search(char *, const char *);
 //ssize_t	fs_read (struct fs_file_t *zfp, void *ptr, size_t size)
 		int write(fs_file_t *, char *, const char *);
 		int lsdir(const char *);
